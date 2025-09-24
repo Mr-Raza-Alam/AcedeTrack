@@ -1,6 +1,9 @@
 
 import React from 'react';
-
+import {
+  loginGoogle,
+  loginGithub,
+  loginTwitter,} from '../../Firebase_Auth/authMethod'
 const SocialAuth = ({ onSocialAuth, isLoading }) => {
   const handleGoogleAuth = async () => {
     try {
@@ -67,7 +70,7 @@ const SocialAuth = ({ onSocialAuth, isLoading }) => {
         <button
           type="button"
           className="social-btn google-btn"
-          onClick={handleGoogleAuth}
+          onClick={loginGoogle}
           disabled={isLoading}
         >
           <i className="fab fa-google"></i>
@@ -77,7 +80,7 @@ const SocialAuth = ({ onSocialAuth, isLoading }) => {
         <button
           type="button"
           className="social-btn github-btn"
-          onClick={handleGitHubAuth}
+          onClick={loginGithub}
           disabled={isLoading}
         >
           <i className="fab fa-github"></i>
@@ -87,7 +90,7 @@ const SocialAuth = ({ onSocialAuth, isLoading }) => {
         <button
           type="button"
           className="social-btn twitter-btn"
-          onClick={handleTwitterAuth}
+          onClick={loginTwitter}
           disabled={isLoading}
         >
           <i className="fab fa-twitter"></i>

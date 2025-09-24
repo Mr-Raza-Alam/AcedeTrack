@@ -1,37 +1,30 @@
-// src/components/Auth/AuthContainer.jsx
-import React, { useState, useEffect } from 'react';
+// src/components/Authy.jsx (or src/pages/Authy.jsx)
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../contexts/AuthContext';
 import { 
   signupEmail, 
   loginEmail, 
   loginGoogle, 
   loginGithub, 
   loginTwitter 
-} from '../../Firebase_Auth/authMethod';
-// import '../../styles/auth';
+} from '../Firebase_Auth/authMethods';
 
-export const AuthContainer = ({ onAuthSuccess }) => {
-  const navigate = useNavigate();
-  const { user, isLoading } = useAuth();
+import '../styles/Authy.css'
+const Authy = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { currentUser } = useAuth();
 
-  // Redirect if already authenticated
+  // Redirect if user is already authenticated
   useEffect(() => {
-    if (user && !isLoading) {
+    if (currentUser) {
       navigate('/dashboard');
     }
-  }, [user, isLoading, navigate]);
-
-  const handleAuthSuccess = () => {
-    navigate('/dashboard');
-    if (onAuthSuccess) {
-      onAuthSuccess();
-    }
-  };
+  }, [currentUser, navigate]);
 
   const handleEmailAuth = async (e) => {
     e.preventDefault();
@@ -41,10 +34,12 @@ export const AuthContainer = ({ onAuthSuccess }) => {
     try {
       if (isLogin) {
         await loginEmail(email, password);
+        console.log('Login successful');
       } else {
         await signupEmail(email, password);
+        console.log('Signup successful');
       }
-      handleAuthSuccess();
+      // Navigation will be handled automatically by useEffect above
     } catch (error) {
       console.error('Authentication error:', error);
       alert(error.message);
@@ -58,21 +53,24 @@ export const AuthContainer = ({ onAuthSuccess }) => {
     
     setLoading(true);
     try {
+      let result;
       switch (provider) {
         case 'google':
-          await loginGoogle();
+          result = await loginGoogle();
           break;
         case 'github':
-          await loginGithub();
+          result = await loginGithub();
           break;
         case 'twitter':
-          await loginTwitter();
+          result = await loginTwitter();
           break;
         default:
           setLoading(false);
           return;
       }
-      handleAuthSuccess();
+      
+      console.log(`${provider} authentication successful:`, result.user);
+      // Navigation will be handled automatically by useEffect above
     } catch (error) {
       console.error(`${provider} auth error:`, error);
       alert(error.message);
@@ -81,11 +79,14 @@ export const AuthContainer = ({ onAuthSuccess }) => {
     }
   };
 
-  // IMPORTANT: Return JSX content
+  if (currentUser) {
+    return <div>Redirecting...</div>; // Show loading while redirecting
+  }
+
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h2>{isLogin ? 'Welcome Back to AcadeTrack' : 'Join AcadeTrack'}</h2>
+        <h2>{isLogin ? 'Sign In to AcadeTrack' : 'Create Your Account'}</h2>
         
         {/* Email/Password Form */}
         <form onSubmit={handleEmailAuth} className="auth-form">
@@ -133,7 +134,7 @@ export const AuthContainer = ({ onAuthSuccess }) => {
             className="social-button google"
             disabled={loading}
           >
-            Continue with Google
+            <span>Google</span>
           </button>
           
           <button 
@@ -141,7 +142,7 @@ export const AuthContainer = ({ onAuthSuccess }) => {
             className="social-button github"
             disabled={loading}
           >
-            Continue with GitHub
+            <span>GitHub</span>
           </button>
           
           <button 
@@ -149,7 +150,7 @@ export const AuthContainer = ({ onAuthSuccess }) => {
             className="social-button twitter"
             disabled={loading}
           >
-            Continue with Twitter
+            <span>Twitter</span>
           </button>
         </div>
 
@@ -158,7 +159,6 @@ export const AuthContainer = ({ onAuthSuccess }) => {
           <p>
             {isLogin ? "Don't have an account? " : "Already have an account? "}
             <button 
-              type="button"
               onClick={() => setIsLogin(!isLogin)}
               className="toggle-button"
               disabled={loading}
@@ -172,4 +172,5 @@ export const AuthContainer = ({ onAuthSuccess }) => {
   );
 };
 
-export default AuthContainer; // Add default export too
+export default Authy;
+

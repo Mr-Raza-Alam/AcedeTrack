@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import SocialAuth from './SocialAuth';
 import { useAuth } from '../../hooks/useAuth';
+import {loginEmail} from "../../Firebase_Auth/authMethod";
 
 const LoginForm = ({ onAuthSuccess, onForgotPassword }) => {
   const [formData, setFormData] = useState({

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import SocialAuth from './SocialAuth';
 import { useAuth } from '../../hooks/useAuth';
+import {signupEmail} from '../../Firebase_Auth/authMethod'
 
 const SignupForm = ({ onAuthSuccess, onSwitchToLogin }) => {
   const [formData, setFormData] = useState({

@@ -1,9 +1,16 @@
+// src/components/Navbar.jsx (add these imports and update the Get Started button)
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Add this import
+import { useAuth } from '../hooks/useAuth'; // Add this import
 import AcadyT from '../assets/AcadyT.png'
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
+  // Add these hooks
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -18,6 +25,16 @@ const Navbar = () => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
+    }
+    setIsMobileMenuOpen(false);
+  };
+
+  // Update this function
+  const handleGetStarted = () => {
+    if (user) {
+      navigate('/dashboard'); // Go to dashboard if logged in
+    } else {
+      navigate('/auth'); // Go to auth page if not logged in
     }
     setIsMobileMenuOpen(false);
   };
@@ -46,11 +63,12 @@ const Navbar = () => {
           <span></span>
         </button>
 
+        {/* Update the button text based on auth status */}
         <button 
           className="cta-nav"
-          onClick={() => scrollToSection('signup')}
+          onClick={handleGetStarted}
         >
-          Get Started
+          {user ? 'Go to Dashboard' : 'Get Started'}
         </button>
       </div>
     </nav>
@@ -58,4 +76,6 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+
 
